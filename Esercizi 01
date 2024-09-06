@@ -1,0 +1,43 @@
+nome = "Fabio"
+print("nome", nome)
+cognome = "Blanna"
+eta = 47
+print("età", eta)
+pi = 3.14159
+print(f"p greco con due decimali: {pi:.3}")
+lunghezza = 10
+print("lunghezza", lunghezza)
+lunghezza = 15
+print("lunghezza riassegnata", lunghezza)
+nome_completo = "Blanna Fabio"
+print("nome completo", nome_completo)
+eta_futura = eta + 10
+print("età futura", eta_futura)
+print(nome, cognome, eta)
+nome = "Pippo"
+cognome = "Baudo"
+eta = 70
+print(nome, cognome, eta)
+eta_corrente = 2024 - 1977
+print("età calcolata con le date", eta_corrente)
+numero1 = 10
+numero2 = 5
+somma = numero1 + numero2
+print("somma", somma)
+differenza = numero1 - numero2
+print("differenza", differenza)
+prodotto = numero1 * numero2
+print("prodotto", prodotto)
+divisione = numero1 / numero2
+print("divisione", divisione)
+resto = numero1 % numero2
+print("resto", resto)
+numero1 = numero1 + 1
+print("numero1 +1:", numero1)
+numero2 = numero2 - 3
+print("numero2 - 3:", numero2)
+risultato = (numero1 * numero1 +5) + (numero2 **2)
+print("risultato", risultato)
+numero1 = numero1 - (numero1 -1)
+print("numero1 che deve diventare 1:", numero1)
+
