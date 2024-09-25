@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vetrina Prodotti</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Stili personalizzati per il carosello */
+        .carousel-item {
+            height: 400px;
+        }
+
+        .carousel-item img {
+            width: 600px;
+            height: 400px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: black;
+        }
+
+        /* Stili personalizzati per le card */
+        .card img {
+            height: 200px;
+            object-fit: contain;
+        }
+
+        .navbar {
+            background-color: darkgreen;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: white !important;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu di navigazione -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="/">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/gestore">Gestione</a>
+                </li>
+                {% if 'user' in session %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Carosello Prodotti -->
+    <div class="container mt-5">
+        <h1>Benvenuti nella nostra Vetrina!</h1>
+
+        <div id="productCarousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                {% for prodotto in lista %}
+                <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h5 style="color: red;">{{ prodotto[1] }}</h5>
+                            <p><strong>Marca:</strong> {{ prodotto[2] }}</p>
+                            <p><strong>Prezzo:</strong> € {{ prodotto[3] }}</p>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <img src="{{ prodotto[5] }}" class="d-block w-100" alt="Immagine Prodotto">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#productCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Precedente</span>
+            </a>
+            <a class="carousel-control-next" href="#productCarousel" role="button" data-slide="next">
+                <span class="sr-only">Successivo</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Sezione Prodotti -->
+    <div class="container mt-5">
+        <h2 class="text-center">Seleziona i prodotti da acquistare</h2>
+        <form method="POST" action="/">
+            <div class="row">
+                {% for prodotto in lista %}
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <img src="{{ prodotto[5] }}" class="card-img-top" alt="{{ prodotto[1] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ prodotto[1] }}</h5>
+                            <p class="card-text">Marca: {{ prodotto[2] }}</p>
+                            <p class="card-text">Prezzo: €{{ prodotto[3] }}</p>
+
+                            <!-- Selezione quantità -->
+                            <div class="form-group">
+                                <label for="quantita-{{ prodotto[0] }}">Quantità:</label>
+                                <input type="number" id="quantita-{{ prodotto[0] }}" name="quantita-{{ prodotto[0] }}" class="form-control" min="0" value="0">
+                                <input type="hidden" name="prodotto_id-{{ prodotto[0] }}" value="{{ prodotto[0] }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Pulsante Aggiungi al Carrello -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-lg" style="background-color: darkgreen; color: white; margin-bottom: 10px">Aggiungi al Carrello</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sezione Carrello -->
+    <div class="container mt-5">
+        <h2 class="text-center">Il tuo Carrello</h2>
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>Prodotto</th>
+                    <th>Prezzo</th>
+                    <th>Quantità</th>
+                    <th>Totale</th>
+                    <th>Azioni</th>  <!-- Colonna per le azioni -->
+                </tr>
+            </thead>
+            <tbody>
+                {% if cart and cart|length > 0 %}
+                    {% for item in cart %}
+                    <tr>
+                        <td>{{ item.nome }}</td>
+                        <td>€{{ item.prezzo }}</td>
+                        <td>{{ item.quantita }}</td>
+                        <td>€{{ item.prezzo * item.quantita }}</td>
+                        <td>
+                            <!-- Pulsante per rimuovere il prodotto dal carrello -->
+                            <form method="POST" action="/remove/{{ loop.index0 }}">
+                                <button type="submit" class="btn btn-danger" title="Rimuovi">
+                                    <span aria-hidden="true">❌</span>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">Il carrello è vuoto.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <h5 id="cartTotal" class="text-right">Totale: €{{ cart_total }}</h5>
+
+        <!-- Pulsante Acquista -->
+        <div class="text-center mt-3">
+            <a href="/prodAcquistati" class="btn btn-success" style="margin-bottom: 10px">Acquista</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-5 text-white text-center" style="background-color: darkgreen">
+        <p>Indirizzo: via De Gasperi (TO).</p>
+        <p>Tel: +39 445544654</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

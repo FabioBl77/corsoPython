@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Prodotti Pet</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+    <style>
+        body {
+            font-family: 'Raleway', sans-serif;
+            font-size: 12px;
+            background-color: #f4f4f4;
+        }
+
+        .navbar {
+            background-color: darkgreen;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            padding: 10px;
+        }
+
+        .container {
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        label {
+            margin-right: 10px;
+            flex-basis: 150px; /* Larghezza fissa per le etichette */
+            display: inline-block;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            flex-grow: 1; /* Consente ai campi di occupare lo spazio rimanente */
+        }
+
+        button[type="submit"] {
+            padding: 10px;
+            background-color: darkgreen;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        button[type="submit"]:hover {
+            background-color: limegreen;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: darkgreen;
+        }
+
+        img {
+            width: 50px;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            font-size: 12px; /* Dimensione del font per i pulsanti */
+        }
+
+        .btn-red {
+            background-color: #e74c3c !important; /* Rosso */
+            width: 30px !important; /* Dimensione ridotta per il pulsante di rimozione */
+            height: 30px !important; /* Dimensione ridotta per il pulsante di rimozione */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px; /* Font size per la X */
+        }
+
+        .btn-yellow {
+            background-color: #f39c12 !important; /* Giallo */
+            font-size: 10px !important; /* Font size ridotto per il pulsante di aggiornamento */
+            padding: 5px !important; /* Riduzione padding */
+        }
+
+        .btn-blue {
+            background-color: darkgreen;
+            color: white;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: darkgreen !important;
+        }
+        h2 {
+            color: darkgreen !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/">Home</a>
+        <a href="/gestore">Gestione Prodotti</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <div class="container">
+
+        <!-- Pulsante per esportare in CSV -->
+        <a href="/export_csv" class="btn-blue" style="margin-bottom: 20px;">Esporta in CSV</a>
+
+        <h1>Aggiungi un nuovo prodotto</h1>
+        <form action="/process" method="POST">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Marca</th>
+                        <th>Prezzo</th>
+                        <th>Categoria</th>
+                        <th>Immagine</th>
+                        <th>Pezzi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" id="nome" name="nome" required></td>
+                        <td><input type="text" id="marca" name="marca" required></td>
+                        <td><input type="number" step="0.01" id="prezzo" name="prezzo" required></td>
+                        <td><input type="text" id="categoria" name="categoria" required></td>
+                        <td><input type="text" id="url" name="url" required></td>
+                        <td><input type="number" id="pezzi" name="pezzi" required></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="submit">Aggiungi Prodotto</button>
+        </form>
+
+        <h2>Lista Prodotti</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Elimina</th> <!-- Colonna per il pulsante di rimozione -->
+                    <th>Immagine</th>
+                    <th>Nome</th>
+                    <th>Marca</th>
+                    <th>Prezzo</th>
+                    <th>Categoria</th>
+                    <th>Pezzi</th>
+                    <th>Modifica</th> <!-- Colonna per il pulsante di modifica -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for prodotto in lista %}
+                <tr>
+                    <td>
+                        <form action="/remove" method="POST" style="display: inline;">
+                            <input type="hidden" name="prod" value="{{ prodotto[0] }}">
+                            <button type="submit" class="btn btn-red">X</button> <!-- Pulsante di rimozione -->
+                        </form>
+                    </td>
+                    <td><img src="{{ prodotto[5] }}" alt="Immagine di {{ prodotto[1] }}"></td>
+                    <td>{{ prodotto[1] }}</td>
+                    <td>{{ prodotto[2] }}</td>
+                    <td>€ {{ prodotto[3] }}</td>
+                    <td>{{ prodotto[4] }}</td>
+                    <td>{{ prodotto[6] }}</td>
+                    <td>
+                        <form action="/updatePezzi" method="POST" style="display: inline;">
+                            <input type="hidden" name="prodID" value="{{ prodotto[0] }}">
+                            <input type="number" name="Npezzi" min="1" placeholder="Qnt" required style="width: 55px;">
+                            <button type="submit" class="btn btn-yellow" required style="width: 55px;">Aggiungi</button> <!-- Pulsante di modifica -->
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Filtra Prodotti per Categoria</h2>
+        <form action="/gestore" method="POST" class="search-container">
+            <label for="categoriaP">Seleziona Categoria:</label>
+            <select id="categoriaP" name="categoriaP" required>
+                <option value="" style="color: darkgreen">--Seleziona Categoria--</option>
+                <option value="tutte">Tutte le categorie</option> <!-- Nuova opzione per visualizzare tutti i prodotti -->
+                {% for categoria in listaS %}
+                    <option value="{{ categoria }}">{{ categoria }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Filtra Prodotto</button>
+        </form>
+        <h1>Statistiche di vendita</h1>
+    <img style="width: 900px;" src="{{ url_for('plot_png') }}" alt="Grafico combinato a Barre e Torta">
+    </div>
+
+    <!--Pandas-->
+    <h3>Dati di vendita</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Marca</th>
+                <th scope="col">Pezzi in magazzino</th>
+                <th scope="col">Pezzi venduti</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pr in listaPandas %}
+            {% if pr[1]== prodottoMax %}
+        <tr style="background-color: yellow;">
+            {% elif pr[1]== prodottoMin %}
+        <tr style="background-color: red;">
+
+            {% else %}
+        <tr>
+      {% endif %}
+
+                    <th scope="row">{{ pr[0] }}</th>
+                    <td>{{ pr[1] }}</td>
+                    <td>{{ pr[2] }}</td>
+                    <td>{{ pr[3] }}</td>
+                    <td>{{ pr[4] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

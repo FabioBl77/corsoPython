@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Pet - Dettagli Acquisto</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Dettagli Acquisto</h1>
+
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>Prodotto</th>
+                    <th>Prezzo</th>
+                    <th>Quantità</th>
+                    <th>Totale</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if acquisti %}
+                    {% for acquisto in acquisti %}
+                    <tr>
+                        <td>{{ acquisto.nome }}</td>
+                        <td>€{{ acquisto.prezzo }}</td>
+                        <td>{{ acquisto.quantita }}</td>
+                        <td>€{{ acquisto.totale_parziale }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center">Nessun acquisto effettuato.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <h3 class="text-right">Totale Complessivo: €{{ totale }}</h3>
+
+        <div class="text-center mt-4">
+            <a href="/" class="btn btn-success">Vai al Negozio</a>
+
+        </div>
+    </div>
+</body>
+</html>
