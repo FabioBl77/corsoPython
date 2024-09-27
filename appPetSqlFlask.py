@@ -116,11 +116,12 @@ def index():
 
 @app.route("/remove/<int:index>", methods=['POST'])
 def removeCarrello(index):
-    prova = session['carrello']
-    if 'carrello' in session:
+    if 'carrello' in session and session['carrello'] is not None and len(session['carrello']) > 0:
         if index < len(session['carrello']):
-            session['carrello'].pop(index)
-            print(f"Prodotto rimosso: {session['carrello']}")
+            articolo_rimosso = session['carrello'].pop(index)
+            print(f"Prodotto rimosso: {articolo_rimosso}")
+        else:
+            print("Indice non valido per rimuovere dal carrello.")
     else:
         print("Nessun carrello nella sessione.")
     return redirect("/")
