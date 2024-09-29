@@ -155,11 +155,13 @@
                         <td>€{{ item.prezzo * item.quantita }}</td>
                         <td>
                             <!-- Pulsante per rimuovere il prodotto dal carrello -->
-                            <form method="POST" action="/remove/{{ loop.index0 }}">
-                                <button type="submit" class="btn btn-danger" title="Rimuovi">
-                                    <span aria-hidden="true">❌</span>
-                                </button>
-                            </form>
+                            {% if item is not none and item.nome is not none and item.prezzo is not none and item.quantita is not none %}
+                                <form method="POST" action="/rimuovi/{{ loop.index0 }}">
+                                    <button type="submit" class="btn btn-danger" title="Rimuovi">
+                                        <span aria-hidden="true">❌</span>
+                                    </button>
+                                </form>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}

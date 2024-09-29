@@ -114,12 +114,13 @@ def index():
     return render_template("vetrinaPet.html", lista=lista, cart=session['carrello'], cart_total=cart_total)
 
 
-@app.route("/remove/<int:index>", methods=['POST'])
+@app.route("/rimuovi/<int:index>", methods=['POST'])
 def removeCarrello(index):
     if 'carrello' in session and session['carrello'] is not None and len(session['carrello']) > 0:
         if index < len(session['carrello']):
             articolo_rimosso = session['carrello'].pop(index)
             print(f"Prodotto rimosso: {articolo_rimosso}")
+            session.modified = True
         else:
             print("Indice non valido per rimuovere dal carrello.")
     else:
